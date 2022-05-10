@@ -37,6 +37,12 @@ async function setFavoriteComic(userId, comicId){
 }
 
 async function removeFavoriteComic(userId, comicId){
+    const params = {
+        TableName: TABLE_NAME,
+        Key: {id: `${userId}-${comicId}`},
+    }
+    
+    await documentClient.delete(params).promise();
     return null
 }
 
