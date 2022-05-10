@@ -18,7 +18,8 @@ async function getFavoriteComics(userId){
     }
     
     const response = await documentClient.scan(params).promise();
-    return response["Items"]
+    const items = response["Items"]
+    return items.map(item => item["comic_id"])
 }
 
 async function setFavoriteComic(userId, comicId){
