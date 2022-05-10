@@ -22,6 +22,16 @@ async function getFavoriteComics(userId){
 }
 
 async function setFavoriteComic(userId, comicId){
+    const params = {
+        TableName: TABLE_NAME,
+        Item: {
+            "id": `${userId}-${comicId}`,
+            "user_id": userId,
+            "comic_id": comicId
+        }
+    }
+    
+    await documentClient.put(params).promise();
     return null
 }
 
@@ -55,7 +65,10 @@ exports.handler = async (event) => {
     }catch(error){
         return {
             statusCode: 500,
-            body: JSON.stringify(error)
+            body: JSON.stringify({
+                message: error.message,
+                error
+            })
         }
     }
 };
