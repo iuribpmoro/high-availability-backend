@@ -1,33 +1,42 @@
-const AWS = require('aws-sdk')
-const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
-// const documentClient = new AWS.DynamoDB.DocumentClient({ region: "us-east-1"});
-
-async function getItems(user_id){
-    
-    const params = {
-        TableName: "marvel-bookmarks",
-        ExpressionAttributeNames: { 
-            '#user_id': 'user_id' 
-        },
-        FilterExpression: '#user_id = :user_id',
-        ExpressionAttributeValues: {
-          ':user_id': user_id,
-        }
-        // ProjectionExpression: 'Episode'
-    }
-    
-    // return await documentClient.scan(params).promise();
-    return await ddb.getItem(params).promise();
+async function getFavoriteComics(userId){
+    return []
 }
 
-exports.handler = async (event, context) => {
-    // TODO implement
-    
-    const items = await getItems("1")
-    
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(items),
-    };
-    return response;
+async function setFavoriteComic(userId, comicId){
+    return null
+}
+
+async function removeFavoriteComic(userId, comicId){
+    return null
+}
+
+async function routeRequest(event){
+    const method = event.requestContext.http.method
+    const query = event.queryStringParameters
+    const body = event.body ? JSON.parse(event.body) : null
+
+    switch(method){
+        case "GET":
+            return getFavoriteComics(query.userId)
+        case "POST":
+            return setFavoriteComic(body.userId, body.comicId)
+        case "DELETE":
+            return removeFavoriteComic(query.userId, query.comicId)
+    }
+}
+
+exports.handler = async (event) => {
+    try{
+        const response = await routeRequest(event)
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(response)
+        }
+    }catch(error){
+        return {
+            statusCode: 500,
+            body: JSON.stringify(error)
+        }
+    }
 };
