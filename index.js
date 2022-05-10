@@ -1,5 +1,24 @@
+const AWS = require('aws-sdk')
+
+const TABLE_NAME = "test-remove"
+const REGION = "us-east-1"
+
+const documentClient = new AWS.DynamoDB.DocumentClient({ region: REGION});
+
 async function getFavoriteComics(userId){
-    return []
+    const params = {
+        TableName: TABLE_NAME,
+        ExpressionAttributeNames: { 
+            '#user_id': 'user_id' 
+        },
+        FilterExpression: '#user_id = :user_id',
+        ExpressionAttributeValues: {
+          ':user_id': userId,
+        }
+    }
+    
+    const response = await documentClient.scan(params).promise();
+    return response["Items"]
 }
 
 async function setFavoriteComic(userId, comicId){
@@ -17,11 +36,11 @@ async function routeRequest(event){
 
     switch(method){
         case "GET":
-            return getFavoriteComics(query.userId)
+            return getFavoriteComics(query.userid)
         case "POST":
             return setFavoriteComic(body.userId, body.comicId)
         case "DELETE":
-            return removeFavoriteComic(query.userId, query.comicId)
+            return removeFavoriteComic(query.userid, query.comicid)
     }
 }
 

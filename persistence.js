@@ -3,7 +3,6 @@ const ddb = new AWS.DynamoDB({ apiVersion: "2012-10-08"});
 // const documentClient = new AWS.DynamoDB.DocumentClient({ region: "us-east-1"});
 
 async function getItems(user_id){
-    
     const params = {
         TableName: "marvel-bookmarks",
         ExpressionAttributeNames: { 
