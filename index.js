@@ -31,7 +31,7 @@ async function setFavoriteComic(userId, comicId){
     const params = {
         TableName: TABLE_NAME,
         Item: {
-            "id": `${userId}-${comicId}`,
+            "table_id": `${userId}-${comicId}`,
             "user_id": userId,
             "comic_id": comicId
         }
@@ -44,7 +44,7 @@ async function setFavoriteComic(userId, comicId){
 async function removeFavoriteComic(userId, comicId){
     const params = {
         TableName: TABLE_NAME,
-        Key: {id: `${userId}-${comicId}`},
+        Key: {table_id: `${userId}-${comicId}`},
     }
     
     await documentClient.delete(params).promise();
@@ -70,8 +70,6 @@ async function routeRequest(event){
 
 exports.handler = async (event) => {
     try{
-        const method = event.requestContext.http.method
-
         const response = await routeRequest(event)
 
         return {
