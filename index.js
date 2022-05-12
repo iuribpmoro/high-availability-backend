@@ -2,6 +2,11 @@ const AWS = require('aws-sdk')
 
 const TABLE_NAME = "test-remove"
 const REGION = "us-east-1"
+const HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Vary": "Access-Control-Request-Headers"
+}
 
 const documentClient = new AWS.DynamoDB.DocumentClient({ region: REGION});
 
@@ -58,6 +63,8 @@ async function routeRequest(event){
             return setFavoriteComic(body.userId, body.comicId)
         case "DELETE":
             return removeFavoriteComic(query.userid, query.comicid)
+        default:
+            return null
     }
 }
 
@@ -65,21 +72,12 @@ exports.handler = async (event) => {
     try{
         const method = event.requestContext.http.method
 
-        if(method === "OPTIONS") return {
-            statusCode: 200,
-            headers: {
-                "Access-Control-Allow-Headers" : "Content-Type",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE"
-            },
-            body: ""
-        }
-
         const response = await routeRequest(event)
 
         return {
             statusCode: 200,
-            body: JSON.stringify(response)
+            body: JSON.stringify(response),
+            headers: HEADERS,
         }
     }catch(error){
         return {
@@ -87,7 +85,8 @@ exports.handler = async (event) => {
             body: JSON.stringify({
                 message: error.message,
                 error
-            })
+            }),
+            headers: HEADERS,
         }
     }
 };
