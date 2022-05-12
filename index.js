@@ -3,9 +3,9 @@ const AWS = require('aws-sdk')
 const TABLE_NAME = "test-remove"
 const REGION = "us-east-1"
 const HEADERS = {
+    "Access-Control-Allow-Headers" : "*",
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "*",
-    "Vary": "Access-Control-Request-Headers"
+    "Access-Control-Allow-Methods": "POST,*"
 }
 
 const documentClient = new AWS.DynamoDB.DocumentClient({ region: REGION});
