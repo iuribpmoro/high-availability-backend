@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk')
 
-const TABLE_NAME = "test-remove"
+const TABLE_NAME = "marvel-bookmarks"
 const REGION = "us-east-1"
 const HEADERS = {
     "Access-Control-Allow-Headers" : "*",
@@ -24,16 +24,18 @@ async function getFavoriteComics(userId){
     
     const response = await documentClient.scan(params).promise();
     const items = response["Items"]
-    return items.map(item => item["comic_id"])
+    return items
 }
 
-async function setFavoriteComic(userId, comicId){
+async function setFavoriteComic(userId, comicId, name, thumbnail){
     const params = {
         TableName: TABLE_NAME,
         Item: {
             "table_id": `${userId}-${comicId}`,
             "user_id": userId,
-            "comic_id": comicId
+            "comic_id": comicId,
+            "name": name,
+            "thumbnail": thumbnail
         }
     }
     
@@ -60,7 +62,7 @@ async function routeRequest(event){
         case "GET":
             return getFavoriteComics(query.userid)
         case "POST":
-            return setFavoriteComic(body.userId, body.comicId)
+            return setFavoriteComic(body.userId, body.comicId, body.name, body.thumbnail)
         case "DELETE":
             return removeFavoriteComic(query.userid, query.comicid)
         default:
