@@ -63,6 +63,18 @@ async function routeRequest(event){
 
 exports.handler = async (event) => {
     try{
+        const method = event.requestContext.http.method
+
+        if(method === "OPTIONS") return {
+            statusCode: 200,
+            headers: {
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET,DELETE"
+            },
+            body: ""
+        }
+
         const response = await routeRequest(event)
 
         return {
